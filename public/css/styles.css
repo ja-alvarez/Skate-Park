@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    background: white;
+    color: black;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 1rem 0;
+}
+
+/* Estilos navbar */
+.custom-navbar {
+    background-color: black;
+    /* Fondo navbar */
+}
+
+.custom-navbar .custom-brand,
+.custom-navbar .nav-link,
+.custom-navbar .dropdown-toggle {
+    color: white;
+    /* Color del texto */
+}
+
+#brand {
+    color: white;
+}
+
+.custom-navbar .custom-link:hover,
+.custom-navbar .dropdown-toggle:hover {
+    color: gray;
+    /* Color del texto al pasar el ratón */
+}
+
+.custom-navbar .custom-toggler {
+    border-color: white;
+    /* Color del borde del botón del toggler */
+}
+
+.custom-navbar .custom-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28white, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/ %3E%3C/svg%3E");
+}
+
+/* Dropdown */
+/* .custom-navbar .custom-dropdown {
+    background-color: black;
+    Fondo del dropdown 
+}
+
+.custom-navbar .custom-dropdown-item {
+    color: white;
+    Color del texto del dropdown 
+}
+
+.custom-navbar .custom-dropdown-item:hover {
+    background-color: gray;
+    Fondo del dropdown al pasar el ratón 
+    color: black;
+    Color del texto del dropdown al pasar el ratón 
+} */
+
+.custom-table thead th {
+    font-weight: bold;
+}
+
+/* Footer */
+i {
+    font-size: xx-large;
+    padding: 0 5px 0 0;
+    margin: 0;
+}
+
+.rrssLinks {
+    text-decoration: none;
+    color: black;
+}

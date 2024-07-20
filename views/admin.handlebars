@@ -1,0 +1,41 @@
+<header class="py-3">
+    <h2 id="" class="text-center">Administración</h2>
+</header>
+
+
+<main class="container">
+    <table class="table custom-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Foto</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Años de experiencia</th>
+                <th scope="col">Especialidad</th>
+                <th scope="col">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each participantes}}
+            <tr>
+                <th scope="row">{{this.id}}</th>
+                {{#if participantes.foto}}
+                <td><img src="/{{participantes.foto}}" alt="Foto de perfil"></td>
+                {{else}}
+                <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto" width="40px"></td>
+                {{/if}}
+                <td>{{this.nombre}}</td>
+                <td>{{this.experiencia}}</td>
+                <td>{{this.especialidad}}</td>
+                <td>
+                    <input type="checkbox" id="checkbox" name="checkbox" checked>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</main>
+<script>
+    document.title = "Página administración";
+    //let checkbox1 = document.getElementById("checkbox1")
+</script>

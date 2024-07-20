@@ -1,0 +1,86 @@
+<header class="py-3">
+    <h2 class="text-center">Registro</h2>
+</header>
+
+<main>
+    <div class="container">
+        <form id="formRegistro">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email"
+                            placeholder="nombre@ejemplo.com" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="repeatPassword" class="form-label">Repita la password <span
+                                class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="experiencia" class="form-label">Años de experiencia <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="experiencia" name="experiencia" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="especialidad" class="form-label">Especialidad<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="especialidad" name="especialidad" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="avatar">Foto de perfil</label>
+                    <input type="file" name="avatar">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-dark my-4">Registrarme</button> <br>
+                    <a href="/login">Iniciar sesión</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    document.title = "Registro participantes";
+    const formRegistro = document.getElementById("formRegistro");
+
+    formRegistro.addEventListener("submit", async (event) => {
+        try {
+            event.preventDefault();
+            let formData = new FormData(formRegistro);
+            if (formData.get("password") != formData.get("repeatPassword")) {
+                return alert("Los passwords no coinciden.")
+            }
+            let response = await fetch("/api/v1/registro", {
+                method: "POST",
+                body: formData,
+            });
+            let data = await response.json();
+            alert(data.message)
+            if (response.status == 201) {
+                location.href = "/login"
+            }
+        } catch (error) {
+            alert("Error al registrar usuario.");
+        }
+    });
+</script>

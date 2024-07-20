@@ -1,0 +1,41 @@
+<header class="py-3">
+    <h2 id="" class="text-center">Lista de participantes</h2>
+</header>
+
+<main class="container">
+    <table class="table custom-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Foto</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Años de experiencia</th>
+                <th scope="col">Especialidad</th>
+                <th scope="col">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each participantes}}
+            <tr>
+                <th scope="row">{{this.id}}</th>
+                {{#if participantes.foto}}
+                <td><img src="/{{participantes.foto}}" alt="Foto de perfil"></td>
+                {{else}}
+                <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto" width="40px"></td>
+                {{/if}}
+                <td>{{this.nombre}}</td>
+                <td>{{this.experiencia}}</td>
+                <td>{{this.especialidad}}</td>
+                <td>{{this.estado}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div class="text-center">
+        <a href="/login">Iniciar sesión</a> | <a href="/registro">Registrarme</a>
+    </div>
+</main>
+
+<script>
+    document.title = "Página principal StakePark";
+</script>

@@ -1,0 +1,122 @@
+<header class="py-3">
+    <h2 class="text-center">Datos del perfil</h2>
+    <hr class="mx-auto" style="width: 80%;">
+</header>
+
+<main>
+    {{#if participante}}
+    <div class="container">
+        <form id="formUpdate">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email"
+                            placeholder="nombre@ejemplo.com" value="{{participante.email}}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nombre" name="nombre"
+                            value="{{participante.nombre}}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            value="{{participante.password}}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="repeatPassword" class="form-label">Repita la password <span
+                                class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword"
+                            value="{{participante.password}}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="experiencia" class="form-label">Años de experiencia <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="experiencia" name="experiencia"
+                            value="{{participante.experiencia}}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="especialidad" class="form-label">Especialidad</label>
+                        <input type="text" class="form-control" id="especialidad" name="especialidad"
+                            value="{{participante.especialidad}}">
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-dark my-1">Actualizar</button> <br>
+                </div>
+            </div>
+        </form>
+        <div class="text-center">
+            <button type="submit" class="btn btn-danger my-1" onclick="eliminarCuenta({{participante.id}})">Eliminar
+                cuenta</button>
+        </div>
+
+    </div>
+    {{/if}}
+</main>
+
+<script>
+    document.title = "Perfil participante";
+    id = participante.id
+    const eliminarCuenta = async (id) => {
+        try {
+            let confirmacion = confirm("¿Está seguro que desea eliminar su cuenta?")
+            if (confirmacion) {
+                let response = await fetch("/api/v1/participantes/" + participante.id, {
+                    method: "DELETE"
+                })
+                let data = await response.json();
+                if (response.status == 200) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("participante");
+                    location.href = "/";
+                } else {
+                    alert(data.message)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+            alert("Error al intentar eliminar participante.")
+        }
+    };
+
+    const formUpdate = document.getElementById("formUpdate");
+    formUpdate.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+            let formData = new FormData(formUpdate);
+            console.log('formData', formData)
+            let data = Object.fromEntries(formData.entries());
+            console.log('data', data)
+            let response = await fetch("/api/v1/participantes/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+            let result = await response.json();
+            if (response.status == 200) {
+                alert(result.message)
+                location.reload();
+            }
+        } catch (error) {
+            console.log('error', error)
+            alert("Error al actualizar usuario.");
+            console.error(error);
+        }
+    });
+
+</script>

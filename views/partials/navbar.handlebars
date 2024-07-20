@@ -1,0 +1,98 @@
+<nav class="navbar navbar-expand-lg custom-navbar px-3">
+    <div class="container-fluid">
+        <div>
+            <a class="navbar-brand custom-brand text-center d-flex align-items-center" href="/">
+                <h1>Stake Park</h1>
+            </a>
+            <h5><span id="brand"></span></h5>
+        </div>
+
+        <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon custom-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-5 ms-auto">
+                <li id="homeLink" class="nav-item mx-3">
+                    <a class="nav-link custom-link {{#if homeView}}active{{/if}}" aria-current="page" href="/">Home</a>
+                </li>
+                <li id="perfilLink" class="nav-item mx-3" style="display: none;">
+                    <a id="perfil" class="nav-link custom-link {{#if perfilView}}active{{/if}}"
+                        href="/perfil">Perfil</a>
+                </li>
+                <li id="registroLink" class="nav-item mx-3">
+                    <a class="nav-link custom-link {{#if registroView}}active{{/if}}" href="/registro">Registro</a>
+                </li>
+                <li id="loginLink" class="nav-item mx-3">
+                    <a class="nav-link custom-link {{#if loginView}}active{{/if}}" href="/login">Login</a>
+                </li>
+                </li>
+                <li id="administracionLinks" class="nav-item mx-3" style="display: none;">
+                    <a id="adminUsuarios" class="nav-link custom-link {{#if adminView}}active{{/if}}"
+                        href="/administracion">Administración</a>
+                </li>
+                <li id="logoutLink" class="nav-item mx-3" style="display: none;">
+                    <a id="logout" class="nav-link custom-link" href="">Logout</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    const homeLink = document.getElementById("homeLink");
+    const perfilLink = document.getElementById("perfilLink");
+    const loginLink = document.getElementById("loginLink");
+    const logoutLink = document.getElementById("logoutLink");
+    const administracionLinks = document.getElementById("administracionLinks");
+    const logout = document.getElementById("logout");
+    const perfil = document.getElementById("perfil");
+    const adminUsuarios = document.getElementById("adminUsuarios");
+
+    let token = localStorage.getItem("token");
+    let participante = JSON.parse(localStorage.getItem("participante"));
+
+    if (token) {
+        loginLink.style.display = "none";
+        registroLink.style.display = "none";
+        logoutLink.style.display = "block";
+        perfilLink.style.display = "block";
+        administracionLinks.style.display = "block";
+    }
+
+    if (participante) {
+        document.getElementById("brand").innerText = "Bienvenido " + participante.nombre;
+        if (participante.admin) {
+            administracionLinks.style.display = "block";
+        }
+    }
+
+    logout.addEventListener("click", (event) => {
+        event.preventDefault();
+        let confirmacion = confirm("¿Está seguro de cerrar sesión?")
+        if (confirmacion) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("participante");
+            //location.reload();
+            //alert("Sesión cerrada correctamente.")
+            setTimeout(() => {
+                location.href = "/";
+            }, 200)
+        }
+    });
+
+    perfil.addEventListener("click", (event) => {
+        event.preventDefault();
+        location.href = "/perfil?token=" + token;
+    });
+</script>
+
+<style>
+    .active {
+        font-weight: bolder;
+        color: white !important;
+    }
+</style>
