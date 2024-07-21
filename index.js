@@ -158,7 +158,7 @@ app.post('/api/v1/login', async (req, res) => {
             return res.status(400).json({ message: 'Debe proporcionar todos los datos para la autenticación.' })
         };
         let consulta = {
-            text: 'SELECT id, email, nombre, password, experiencia, especialidad FROM participantes WHERE email = $1 AND password = $2',
+            text: 'SELECT id, email, nombre, password, experiencia, especialidad, admin FROM participantes WHERE email = $1 AND password = $2',
             values: [email, password]
         };
         let respuesta = await db.query(consulta)
