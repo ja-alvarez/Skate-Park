@@ -88,6 +88,11 @@
         event.preventDefault();
         location.href = "/perfil?token=" + token;
     });
+
+    adminUsuarios.addEventListener("click", (event) => {
+        event.preventDefault();
+        location.href = "/administracion?token=" + token;
+    });
 </script>
 
 <style>

@@ -92,7 +92,7 @@ app.get('/perfil', validateToken, async (req, res) => {
     }
 });
 
-app.get('/administracion', async (req, res) => {
+app.get('/administracion', validateToken, validateAdmin, async (req, res) => {
     try {
         let { rows } = await db.query('SELECT id, foto, nombre, experiencia, especialidad, estado FROM participantes ORDER BY id');
         let participantes = rows;
