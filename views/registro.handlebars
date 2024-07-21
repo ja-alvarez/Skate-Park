@@ -22,14 +22,14 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password" pattern=".{6,}" title="La contraseña debe contener al menos 6 caracteres." required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="repeatPassword" class="form-label">Repita la password <span
                                 class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" required>
+                        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" pattern=".{6,}" title="La contraseña debe contener al menos 6 caracteres." required>
                     </div>
                 </div>
                 <div class="col-md-6">
