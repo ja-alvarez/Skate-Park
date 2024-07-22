@@ -235,8 +235,8 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
             text: 'UPDATE participantes SET email = $1, nombre = $2, password = $3, experiencia = $4, especialidad = $5 WHERE id = $6',
             values: [email, nombre, password, experiencia, especialidad, id]
         }
-        respuesta = await db.query(consulta)
-        res.status(200)
+        await db.query(consulta)
+        res.status(200).json({ message: 'Participante actualizado exitosamente.' });
     } catch (error) {
         res.status(500)
     }
