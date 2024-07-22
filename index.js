@@ -61,6 +61,7 @@ app.get(['/', '/home'], async (req, res) => {
     try {
         let { rows } = await db.query('SELECT id, foto, nombre, experiencia, especialidad, estado FROM participantes ORDER BY id');
         let participantes = rows;
+        console.log(participantes[0].foto)
         res.render('home', {
             homeView: true,
             participantes

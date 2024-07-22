@@ -18,8 +18,8 @@
             {{#each participantes}}
             <tr class="align-middle">
                 <th scope="row">{{this.id}}</th>
-                {{#if participantes.foto}}
-                <td><img src="/avatars/{{participantes.foto}}" alt="Foto de perfil"></td>
+                {{#if this.foto}}
+                <td><img src="/avatars/{{foto}}" alt="Foto de perfil"></td>
                 {{else}}
                 <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto"></td>
                 {{/if}}
