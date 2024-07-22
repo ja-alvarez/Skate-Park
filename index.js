@@ -24,9 +24,18 @@ const hbs = create({
     partialsDir: [
         path.resolve(__dirname, './views/partials/'),
     ],
+    // Podría almacenar estado como boolean y no ocupar helpers
     helpers: {
         estadoClass: (estado) => {
             return estado === 'Aprobado' ? 'text-success' : 'text-secondary';
+        },
+        ifCond: (v1, operator, v2, options) => {
+            switch (operator) {
+                case '==':
+                    return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                default:
+                    return options.inverse(this);
+            }
         }
     }
 });

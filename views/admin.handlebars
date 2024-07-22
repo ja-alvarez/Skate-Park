@@ -17,26 +17,30 @@
         </thead>
         <tbody>
             {{#each participantes}}
-            <tr>
+            <tr class="align-middle">
                 <th scope="row">{{this.id}}</th>
-                {{#if participantes.foto}}
-                <td><img src="/{{participantes.foto}}" alt="Foto de perfil"></td>
+                {{#if this.foto}}
+                <td><img src="/avatars/{{foto}}" alt="Foto de perfil"></td>
                 {{else}}
                 <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto" width="40px"></td>
                 {{/if}}
                 <td>{{this.nombre}}</td>
                 <td>{{this.experiencia}}</td>
                 <td>{{this.especialidad}}</td>
-                <td>
-                    <input type="checkbox" id="checkbox" name="checkbox" checked>
-                </td>
+                {{#ifCond this.estado "==" "Aprobado"}}
+                <td><input type="checkbox" id="checkbox" name="checkbox" checked></td>
+                {{else}}
+                <td><input type="checkbox" id="checkbox" name="checkbox"></td>
+                {{/ifCond}}
             </tr>
             {{/each}}
         </tbody>
     </table>
 </main>
 
-{{!-- <script src="/js/admin.js"></script> *corregir vista --}}
+{{!--
+<script src="/js/admin.js"></script> *corregir vista --}}
+<link rel="stylesheet" href="/css/homeStyles.css">
 
 <script>
     document.title = "Página administración";
