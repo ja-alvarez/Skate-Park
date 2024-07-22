@@ -18,6 +18,6 @@ formRegistro.addEventListener("submit", async (event) => {
             location.href = "/login"
         }
     } catch (error) {
-        alert("Error al registrar usuario.");
+        //alert("Error al registrar usuario.");
     }
 });

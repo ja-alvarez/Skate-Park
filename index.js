@@ -61,13 +61,11 @@ app.get(['/', '/home'], async (req, res) => {
     try {
         let { rows } = await db.query('SELECT id, foto, nombre, experiencia, especialidad, estado FROM participantes ORDER BY id');
         let participantes = rows;
-        console.log(participantes[0].foto)
         res.render('home', {
             homeView: true,
             participantes
         })
     } catch (error) {
-        console.log(error);
         res.status(500).render('error', {
             error: 'No fue posible mostrar la página, intente más tarde.'
         })
@@ -164,7 +162,13 @@ app.post('/api/v1/registro', async (req, res) => {
         }
     } catch (error) {
         log(error.message)
-        res.status(500).json({ message: 'Error en proceso de registro usuario' })
+        let message = 'Error en proceso de registro usuario';
+        let status = 500;
+        if (error.code == '23505') {
+            message = 'Ya existe un usuario registrado con ese email.',
+            status = 400;
+        }
+        res.status(status).json({ message  })
     }
 });
 
