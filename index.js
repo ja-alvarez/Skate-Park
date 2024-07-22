@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import jwt from 'jsonwebtoken';
 import fileUpload from 'express-fileupload';
 import moment from 'moment';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 dotenv.config();
 import db from './database/config.js';
@@ -141,6 +142,9 @@ app.post('/api/v1/registro', async (req, res) => {
         if (password != repeatPassword) {
             return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
         };
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         let avatar;
         if (req.files.avatar) {
             avatar = req.files.avatar;
@@ -158,14 +162,14 @@ app.post('/api/v1/registro', async (req, res) => {
             //Guardar info en la base de datos
             let consulta = {
                 text: 'INSERT INTO participantes (foto, nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5, $6) ',
-                values: [`${nombreArchivo}`, nombre, email, password, experiencia, especialidad]
+                values: [`${nombreArchivo}`, nombre, email, hashedPassword, experiencia, especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })
         } else {
             let consulta = {
                 text: 'INSERT INTO participantes (nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5) ',
-                values: [nombre, email, password, experiencia, especialidad]
+                values: [nombre, email, hashedPassword, experiencia, especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })
@@ -189,16 +193,25 @@ app.post('/api/v1/login', async (req, res) => {
             return res.status(400).json({ message: 'Debe proporcionar todos los datos para la autenticación.' })
         };
         let consulta = {
-            text: 'SELECT id, email, nombre, admin FROM participantes WHERE email = $1 AND password = $2',
-            values: [email, password]
+            text: 'SELECT id, email, nombre, admin, password FROM participantes WHERE email = $1', //AND password = $2
+            values: [email] //, password
         };
+
         let respuesta = await db.query(consulta)
         let participante = respuesta.rows[0]
+
         if (!participante) {
-            return res.status(400).json({
-                message: "Credenciales inválidas."
-            })
+            return res.status(400).json({ message: "Credenciales inválidas." })
         };
+
+        //Comparar las contraseñas
+        const isMatch = await bcrypt.compare(password, participante.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Credenciales incorrectas.' });
+        }
+        //eliminar pass del objeto antes de enviarlo
+        delete participante.password;
+
         //Generación token jwt
         const token = jwt.sign(participante, jwtSecret, { expiresIn: '30m' })
         res.status(200).json({
@@ -239,17 +252,24 @@ app.delete('/api/v1/participantes/:id', async (req, res) => {
 app.put('/api/v1/participantes/:id', async (req, res) => {
     try {
         let { id } = req.params;
-        let { email, nombre, password, experiencia, especialidad } = req.body;
-        let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
-        let usuario = rows[0];
-        password = password || usuario.password; // password y especialidad opcional
-        especialidad = especialidad || usuario.especialidad;
-        let consulta = {
-            text: 'UPDATE participantes SET email = $1, nombre = $2, password = $3, experiencia = $4, especialidad = $5 WHERE id = $6',
-            values: [email, nombre, password, experiencia, especialidad, id]
+        let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
+        log('Password: ', password)
+        log('Password: ', repeatPassword)
+        if (password === repeatPassword) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
+            let usuario = rows[0];
+            password = hashedPassword || usuario.password; // password y especialidad opcional
+            especialidad = especialidad || usuario.especialidad;
+            let consulta = {
+                text: 'UPDATE participantes SET email = $1, nombre = $2, password = $3, experiencia = $4, especialidad = $5 WHERE id = $6',
+                values: [email, nombre, password, experiencia, especialidad, id]
+            }
+            await db.query(consulta);
+            res.status(200).json({ message: 'Participante actualizado exitosamente.' });
+        } else {
+            return res.status(401).json({message: 'No fue posible actualizar los datos.'})
         }
-        await db.query(consulta);
-        res.status(200).json({ message: 'Participante actualizado exitosamente.' });
     } catch (error) {
         res.status(500).json({ message: 'Error en proceso de actualización.' });
     }

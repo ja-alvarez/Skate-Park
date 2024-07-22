@@ -43,6 +43,9 @@ formUpdate.addEventListener("submit", async (event) => {
         if (response.status == 200) {
             alert(result.message)
             location.reload();
+        } else {
+            alert(result.message)
+            location.reload();
         }
     } catch (error) {
         console.log('error', error)
