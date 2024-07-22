@@ -87,7 +87,7 @@ app.get('/login', (req, res) => {
 //Vistas protegidas
 app.get('/perfil', validateToken, async (req, res) => {
     try {
-        let { rows } = await db.query('SELECT id, email, nombre, password, experiencia, especialidad FROM participantes WHERE id = $1', [req.participante.id])
+        let { rows } = await db.query('SELECT email, nombre, experiencia, especialidad FROM participantes WHERE id = $1', [req.participante.id])
         let participante = rows[0];
         if (participante) {
             res.render('perfil', {
@@ -95,7 +95,10 @@ app.get('/perfil', validateToken, async (req, res) => {
                 participante
             });
         } else {
-            throw new Error("No existe el participante.")
+            res.render('perfil', {
+                perfilView: true,
+                error: 'No fue posible mostrar sus datos, intente más tarde.'
+            })
         }
     } catch (error) {
         log(error)

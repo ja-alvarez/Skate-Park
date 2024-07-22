@@ -12,6 +12,7 @@ const eliminarCuenta = async (id) => {
             if (response.status == 200) {
                 localStorage.removeItem("token");
                 localStorage.removeItem("participante");
+                //localStorage.clear();
                 location.href = "/";
             } else {
                 alert(data.message)

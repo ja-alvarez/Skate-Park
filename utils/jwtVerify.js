@@ -17,7 +17,14 @@ const validateToken = (req, res, next) => {
         //console.log(decoded);
         next();
     } catch (error) {
-        let message = 'Error en proceso de verificación de credenciales.';
+        let message;
+        if(error.message == 'invalid signature'){
+            message = 'Token inválido o caducado, vuelva a iniciar sesión.'
+        } else if (error.message == 'jwt expired') {
+            message = 'Su sesión ha expirado, vuelva a iniciar sesión.'
+        } else {
+            message = 'Error en proceso de verificación de credenciales.'
+        }
         responseFormat(res, req.url, message, 500)
     }
 };
