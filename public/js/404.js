@@ -1,0 +1,1 @@
+document.title = "404 Página no encontrada";
