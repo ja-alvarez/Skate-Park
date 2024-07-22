@@ -133,7 +133,7 @@ app.post('/api/v1/registro', async (req, res) => {
         if (req.files.avatar) {
             avatar = req.files.avatar;
             //log('FOTOOOOO', foto)
-            log('avataaaaar' ,avatar)
+            log('avataaaaar', avatar)
             // Ruta donde se guardará la imagen
             let imagenType = avatar.mimetype.split('/')[1]
             let nombreArchivo = `IMG_${nombre}_${moment().format('YYMMDD-HHmmss')}.${imagenType}`
@@ -165,10 +165,10 @@ app.post('/api/v1/registro', async (req, res) => {
         let message = 'Error en proceso de registro usuario';
         let status = 500;
         if (error.code == '23505') {
-            message = 'Ya existe un usuario registrado con ese email.',
+            message = 'Ya existe un usuario registrado con ese email.';
             status = 400;
         }
-        res.status(status).json({ message  })
+        res.status(status).json({ message })
     }
 });
 
