@@ -6,6 +6,10 @@
     font-style: normal;
 }
 
+h2 {
+    font-weight: bold;
+}
+
 body {
     background: white;
     color: black;

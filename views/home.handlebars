@@ -16,17 +16,17 @@
         </thead>
         <tbody>
             {{#each participantes}}
-            <tr>
+            <tr class="align-middle">
                 <th scope="row">{{this.id}}</th>
                 {{#if participantes.foto}}
-                <td><img src="/{{participantes.foto}}" alt="Foto de perfil"></td>
+                <td><img src="/avatars/{{participantes.foto}}" alt="Foto de perfil"></td>
                 {{else}}
-                <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto" width="40px"></td>
+                <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto"></td>
                 {{/if}}
                 <td>{{this.nombre}}</td>
                 <td>{{this.experiencia}}</td>
                 <td>{{this.especialidad}}</td>
-                <td class="{{estadoClass this.estado}}">{{this.estado}}</td>
+                <td class="{{estadoClass this.estado}}"><strong>{{this.estado}}</strong></td>
             </tr>
             {{/each}}
         </tbody>
@@ -36,4 +36,5 @@
     </div>
 </main>
 
+<link rel="stylesheet" href="/css/homeStyles.css">
 <script src="/js/home.js"></script>

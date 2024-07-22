@@ -127,19 +127,20 @@ app.get('/administracion', validateToken, validateAdmin, async (req, res) => {
 app.post('/api/v1/registro', async (req, res) => {
     try {
         let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-        console.log('REPETIR PASS', repeatPassword)
         if (password != repeatPassword) {
             return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
         };
-        let foto;
-        if (foto) {
-            foto = req.files.foto;
+        let avatar;
+        if (req.files.avatar) {
+            avatar = req.files.avatar;
+            //log('FOTOOOOO', foto)
+            log('avataaaaar' ,avatar)
             // Ruta donde se guardará la imagen
-            let imagenType = foto.mimetype.split('/')[1]
+            let imagenType = avatar.mimetype.split('/')[1]
             let nombreArchivo = `IMG_${nombre}_${moment().format('YYMMDD-HHmmss')}.${imagenType}`
             let uploadPath = path.join(__dirname, '/public/avatars/', nombreArchivo);
             // Guardar imagen
-            foto.mv(uploadPath, (error) => {
+            avatar.mv(uploadPath, (error) => {
                 if (error) {
                     log(error)
                     return res.status(500).json({ message: 'No se pudo guardar la imagen en el servidor.' })
@@ -147,8 +148,8 @@ app.post('/api/v1/registro', async (req, res) => {
             });
             //Guardar info en la base de datos
             let consulta = {
-                text: 'INSERT INTO participantes (foto, nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5, $6, $7) ',
-                values: [`avatars/${nombreArchivo}`, nombre, email, password, experiencia, especialidad]
+                text: 'INSERT INTO participantes (foto, nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5, $6) ',
+                values: [`${nombreArchivo}`, nombre, email, password, experiencia, especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })
