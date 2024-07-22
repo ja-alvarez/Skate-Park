@@ -24,6 +24,11 @@ const hbs = create({
     partialsDir: [
         path.resolve(__dirname, './views/partials/'),
     ],
+    helpers: {
+        estadoClass: (estado) => {
+            return estado === 'Aprobado' ? 'text-success' : 'text-secondary';
+        }
+    }
 });
 
 app.engine('handlebars', hbs.engine);
@@ -34,16 +39,25 @@ app.set('views', path.resolve(__dirname, './views'));
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(fileUpload());
 app.use(morgan('tiny'));
 app.use(express.static('public'));
+let maxSizeImage = 2
+app.use(fileUpload({
+    limits: { fileSize: maxSizeImage * 1024 * 1024 },
+    abortOnLimit: true,
+    limitHandler: (req, res) => {
+        res.status(400).json({
+            message: `Ha superado el tamaño establecido para las imágenes [${maxSizeImage} mbs.].`
+        })
+    }
+}));
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`)
 });
 
-// Vistas
-app.get('/', async (req, res) => {
+// Vistas publicas
+app.get(['/', '/home'], async (req, res) => {
     try {
         let { rows } = await db.query('SELECT id, foto, nombre, experiencia, especialidad, estado FROM participantes ORDER BY id');
         let participantes = rows;
@@ -71,6 +85,7 @@ app.get('/login', (req, res) => {
     })
 });
 
+//Vistas protegidas
 app.get('/perfil', validateToken, async (req, res) => {
     try {
         let { rows } = await db.query('SELECT id, email, nombre, password, experiencia, especialidad FROM participantes WHERE id = $1', [req.participante.id])
