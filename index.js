@@ -132,8 +132,6 @@ app.post('/api/v1/registro', async (req, res) => {
         let avatar;
         if (req.files.avatar) {
             avatar = req.files.avatar;
-            //log('FOTOOOOO', foto)
-            log('avataaaaar', avatar)
             // Ruta donde se guardará la imagen
             let imagenType = avatar.mimetype.split('/')[1]
             let nombreArchivo = `IMG_${moment().format('YYMMDD-HHmmss')}_${nombre}.${imagenType}`
@@ -179,7 +177,7 @@ app.post('/api/v1/login', async (req, res) => {
             return res.status(400).json({ message: 'Debe proporcionar todos los datos para la autenticación.' })
         };
         let consulta = {
-            text: 'SELECT id, email, nombre FROM participantes WHERE email = $1 AND password = $2',
+            text: 'SELECT id, email, nombre, admin FROM participantes WHERE email = $1 AND password = $2',
             values: [email, password]
         };
         let respuesta = await db.query(consulta)
@@ -190,7 +188,7 @@ app.post('/api/v1/login', async (req, res) => {
             })
         };
         //Generación token jwt
-        const token = jwt.sign(participante, jwtSecret)
+        const token = jwt.sign(participante, jwtSecret, { expiresIn: '30m'})
         res.status(200).json({
             message: 'Login correcto.',
             token,

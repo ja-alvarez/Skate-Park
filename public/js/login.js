@@ -22,5 +22,6 @@ formLogin.addEventListener("submit", async (event) => {
     } catch {
         alert("Error al iniciar sesion.");
         localStorage.removeItem("token");
+        //localStorage.clear();
     }
 })
