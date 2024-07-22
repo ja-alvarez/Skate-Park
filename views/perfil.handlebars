@@ -10,14 +10,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" name="email"
                             placeholder="nombre@ejemplo.com" value="{{participante.email}}" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre</label>
+                        <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="nombre" name="nombre"
                             value="{{participante.nombre}}" required>
                     </div>
@@ -38,7 +38,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="experiencia" class="form-label">Años de experiencia</label>
+                        <label for="experiencia" class="form-label">Años de experiencia <span
+                                class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="experiencia" name="experiencia"
                             value="{{participante.experiencia}}" required>
                     </div>

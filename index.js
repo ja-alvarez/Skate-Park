@@ -231,11 +231,20 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
     try {
         let { id } = req.params;
         let { email, nombre, password, experiencia, especialidad } = req.body;
+        let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
+
+        let usuario = rows[0];
+        usuario.email = email || usuario.email;
+        usuario.nombre = nombre || usuario.nombre;
+        usuario.password = password || usuario.password;
+        usuario.experiencia = experiencia || usuario.experiencia;
+        usuario.especialidad = especialidad || usuario.especialidad;
+        log(usuario.email, usuario.nombre, usuario.password, usuario.experiencia, usuario.especialidad, id)
         let consulta = {
             text: 'UPDATE participantes SET email = $1, nombre = $2, password = $3, experiencia = $4, especialidad = $5 WHERE id = $6',
-            values: [email, nombre, password, experiencia, especialidad, id]
+            values: [usuario.email, usuario.nombre, usuario.password, usuario.experiencia, usuario.especialidad, id]
         }
-        await db.query(consulta)
+        await db.query(consulta);
         res.status(200).json({ message: 'Participante actualizado exitosamente.' });
     } catch (error) {
         res.status(500).json({ message: 'Error en proceso de actualización.' });
