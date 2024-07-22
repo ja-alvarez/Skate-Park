@@ -191,7 +191,7 @@ app.post('/api/v1/login', async (req, res) => {
             })
         };
         //Generación token jwt
-        const token = jwt.sign(participante, jwtSecret, { expiresIn: '30m'})
+        const token = jwt.sign(participante, jwtSecret, { expiresIn: '30m' })
         res.status(200).json({
             message: 'Login correcto.',
             token,
@@ -238,7 +238,7 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
         await db.query(consulta)
         res.status(200).json({ message: 'Participante actualizado exitosamente.' });
     } catch (error) {
-        res.status(500)
+        res.status(500).json({ message: 'Error en proceso de actualización.' });
     }
 });
 
