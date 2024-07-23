@@ -5,7 +5,6 @@ dotenv.config();
 
 const validateAdmin = async (req, res, next) => {
     try {
-        console.log('id USUARIO', req.participante.id)
         let consulta = {
             text: 'SELECT admin FROM participantes WHERE id = $1',
             values: [req.participante.id]

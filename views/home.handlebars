@@ -26,7 +26,12 @@
                 <td>{{this.nombre}}</td>
                 <td>{{this.experiencia}}</td>
                 <td>{{this.especialidad}}</td>
-                <td class="{{estadoClass this.estado}}"><strong>{{this.estado}}</strong></td>
+                {{#if estado}}
+                <td class="text-success font-weight-bold"><strong>Aprobado</strong></td>
+                {{else}}
+                <td class="text-secondary font-weight-bold"><strong>En revisión</strong></td>
+
+                {{/if}}
             </tr>
             {{/each}}
         </tbody>

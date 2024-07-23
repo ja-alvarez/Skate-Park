@@ -24,21 +24,7 @@ const log = console.log;
 const hbs = create({
     partialsDir: [
         path.resolve(__dirname, './views/partials/'),
-    ],
-    // Podría almacenar estado como boolean y no ocupar helpers
-    helpers: {
-        estadoClass: (estado) => {
-            return estado === 'Aprobado' ? 'text-success' : 'text-secondary';
-        },
-        ifCond: (v1, operator, v2, options) => {
-            switch (operator) {
-                case '==':
-                    return (v1 == v2) ? options.fn(this) : options.inverse(this);
-                default:
-                    return options.inverse(this);
-            }
-        }
-    }
+    ]
 });
 
 app.engine('handlebars', hbs.engine);
@@ -247,14 +233,40 @@ app.delete('/api/v1/participantes/:id', async (req, res) => {
     }
 });
 
-//Error put. Info se actualiza en la bbdd, demora la respuesta y front muestra alert error
-//token
+
+app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async(req, res) => {
+    try {
+        let id = req.query.id; // let { id } = req.query;
+        if(!id){
+            return res.status(400).json({
+                message: 'Debe proporcionar el id del usuario al cual desea cambiar estado.'
+            })
+        }
+
+        let { rows } = await db.query('SELECT estado FROM participantes WHERE id = $1', [id] )
+        let usuario = rows[0];
+        console.log('usuario', usuario)
+        if (!usuario){
+            return res.status(404).json({message: 'El usuario que desea modificar no fue encontrado. Refresque la página.'})
+        }
+        let estado = !usuario.estado
+        console.log('estado', estado)
+        // let estadoActual = rows[0] ? rows[0].estado : false;
+        // let nuevoEstado = !estadoActual;
+        await db.query('UPDATE participantes SET estado = $1 WHERE id = $2', [estado, id]) //nuevoEstado
+        res.status(201).json({message: 'Estado modificado con éxito.'})
+    } catch (error) {
+        console.log('catch error', error)
+        res.status(500).json({
+            message: 'Error al intentar actualizar el estado del usuario.'
+        })
+    }
+});
+
 app.put('/api/v1/participantes/:id', async (req, res) => {
     try {
         let { id } = req.params;
         let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-        log('Password: ', password)
-        log('Password: ', repeatPassword)
         if (password === repeatPassword) {
             const hashedPassword = await bcrypt.hash(password, 10);
             let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
@@ -268,9 +280,11 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
             await db.query(consulta);
             res.status(200).json({ message: 'Participante actualizado exitosamente.' });
         } else {
+            console.log('else', error)
             return res.status(401).json({message: 'No fue posible actualizar los datos.'})
         }
     } catch (error) {
+        console.log('catch', error)
         res.status(500).json({ message: 'Error en proceso de actualización.' });
     }
 });

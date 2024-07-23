@@ -7,9 +7,16 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const validateToken = (req, res, next) => {
     try {
-        let { token } = req.query;
+        let token;
+
+        if (req.query?.token){
+            token = req.query.token;
+        } else if (req.headers?.authorization) {
+            token = req.headers.authorization.split(" ")[1];
+        }
+
         if (!token) {
-            let message = 'Necesita iniciar sesión para continuar.';
+            let message = 'Recurso protegido, debe contar con credenciales válidas.';
             responseFormat(res, req.url, message, 401)
         }
         let decoded = jwt.verify(token, jwtSecret);

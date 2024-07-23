@@ -18,20 +18,21 @@
         <tbody>
             {{#each participantes}}
             <tr class="align-middle">
-                <th scope="row">{{this.id}}</th>
-                {{#if this.foto}}
+                <th scope="row">{{id}}</th>
+                {{#if foto}}
                 <td><img src="/avatars/{{foto}}" alt="Foto de perfil"></td>
                 {{else}}
                 <td><img src="/avatars/sin_foto.jpeg" alt="Sin foto" width="40px"></td>
                 {{/if}}
-                <td>{{this.nombre}}</td>
-                <td>{{this.experiencia}}</td>
-                <td>{{this.especialidad}}</td>
-                {{#ifCond this.estado "==" "Aprobado"}}
-                <td><input type="checkbox" id="checkbox" name="checkbox" checked></td>
+                <td>{{nombre}}</td>
+                <td>{{experiencia}}</td>
+                <td>{{especialidad}}</td>
+                {{#if estado}}
+                <td><input type="checkbox" name="checkbox" checked onclick="cambiarEstado({{id}})">
+                </td>
                 {{else}}
-                <td><input type="checkbox" id="checkbox" name="checkbox"></td>
-                {{/ifCond}}
+                <td><input type="checkbox" name="checkbox" onclick="cambiarEstado({{id}})"></td>
+                {{/if}}
             </tr>
             {{/each}}
         </tbody>
@@ -44,5 +45,28 @@
 
 <script>
     document.title = "Página administración";
-    //let checkbox1 = document.getElementById("checkbox1")
+
+    const cambiarEstado = async (id) => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${token}`)
+
+            let response = await fetch("/api/v1/participantes/estado?id=" + id, {
+                method: "PUT",
+                headers: myHeaders
+            });
+            let data = await response.json();
+            alert(data.message)
+            location.reload()
+            //if (status == 201) {
+            //}
+
+
+        } catch (error) {
+            console.log(error)
+            alert("Error al intentar cambiar el estado.");
+            //location.reload();
+        }
+    }
+
 </script>
