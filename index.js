@@ -234,7 +234,6 @@ app.delete('/api/v1/participantes/:id', async (req, res) => {
     }
 });
 
-
 app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async (req, res) => {
     try {
         let id = req.query.id; // let { id } = req.query;
@@ -243,17 +242,12 @@ app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async (req
                 message: 'Debe proporcionar el id del usuario al cual desea cambiar estado.'
             })
         }
-
         let { rows } = await db.query('SELECT estado FROM participantes WHERE id = $1', [id])
         let usuario = rows[0];
-        console.log('usuario', usuario)
         if (!usuario) {
             return res.status(404).json({ message: 'El usuario que desea modificar no fue encontrado. Refresque la página.' })
         }
         let estado = !usuario.estado
-        console.log('estado', estado)
-        // let estadoActual = rows[0] ? rows[0].estado : false;
-        // let nuevoEstado = !estadoActual;
         await db.query('UPDATE participantes SET estado = $1 WHERE id = $2', [estado, id]) //nuevoEstado
         res.status(201).json({ message: 'Estado modificado con éxito.' })
     } catch (error) {
@@ -269,12 +263,16 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
     try {
         let { id } = req.params;
         let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-        log('email: ', email, ' - nombre: ', nombre, ' - password: ', password, ' - repeatPassword', repeatPassword, ' - experiencia: ', experiencia, ' - especialidad: ', especialidad)
         if (password === repeatPassword) {
             const hashedPassword = await bcrypt.hash(password, 10);
             let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
             let usuario = rows[0];
-            password = hashedPassword || usuario.password; // password y especialidad opcional
+            if ((!password || password.trim() === '') || (!repeatPassword || repeatPassword.trim() === '')) {
+                password = usuario.password;
+            } else {
+                password = hashedPassword
+            }
+            // password = hashedPassword || usuario.password; // password y especialidad opcional
             especialidad = especialidad || usuario.especialidad;
             let consulta = {
                 text: 'UPDATE participantes SET email = $1, nombre = $2, password = $3, experiencia = $4, especialidad = $5 WHERE id = $6',
@@ -282,10 +280,6 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
             }
             await db.query(consulta);
             res.status(200).json({ message: 'Participante actualizado exitosamente.' });
-
-
-
-
         } else {
             console.log('else', error)
             return res.status(401).json({ message: 'No fue posible actualizar los datos.' })
