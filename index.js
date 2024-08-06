@@ -186,7 +186,6 @@ app.post('/api/v1/login', async (req, res) => {
 
         let respuesta = await db.query(consulta)
         let participante = respuesta.rows[0]
-
         if (!participante) {
             return res.status(400).json({ message: "Credenciales inválidas." })
         };
@@ -196,7 +195,7 @@ app.post('/api/v1/login', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciales incorrectas.' });
         }
-        //eliminar pass del objeto antes de enviarlo
+        //eliminar pass del participante antes de enviarlo
         delete participante.password;
 
         //Generación token jwt
@@ -248,10 +247,9 @@ app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async (req
             return res.status(404).json({ message: 'El usuario que desea modificar no fue encontrado. Refresque la página.' })
         }
         let estado = !usuario.estado
-        await db.query('UPDATE participantes SET estado = $1 WHERE id = $2', [estado, id]) //nuevoEstado
+        await db.query('UPDATE participantes SET estado = $1 WHERE id = $2', [estado, id])
         res.status(201).json({ message: 'Estado modificado con éxito.' })
     } catch (error) {
-        console.log('catch error', error)
         res.status(500).json({
             message: 'Error al intentar actualizar el estado del usuario.'
         })
