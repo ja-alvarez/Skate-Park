@@ -124,25 +124,23 @@ app.get('/administracion', validateToken, validateAdmin, async (req, res) => {
 // Endpoints
 app.post('/api/v1/registro', async (req, res) => {
     try {
-        console.log(req.files);
-        if (req.files == null) {
+        const registroUsuario = async () => {
             let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-            if (password != repeatPassword) {
-                return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
-            };
+            if (password !== repeatPassword) {
+                return res.status(400).json({ message: 'Las contraseñas no coinciden.' });
+            }
             const hashedPassword = await bcrypt.hash(password, 10);
+            return { email, nombre, hashedPassword, experiencia, especialidad };
+        };
+        const detalleUsuario = await registroUsuario();
+        if (req.files == null) {
             let consulta = {
                 text: 'INSERT INTO participantes (nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5) ',
-                values: [nombre, email, hashedPassword, experiencia, especialidad]
+                values: [detalleUsuario.nombre, detalleUsuario.email, detalleUsuario.hashedPassword, detalleUsuario.experiencia, detalleUsuario.especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })
         } else {
-            let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-            if (password != repeatPassword) {
-                return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
-            };
-            const hashedPassword = await bcrypt.hash(password, 10);
             avatar = req.files.avatar;
             // Ruta donde se guardará la imagen
             let imagenType = avatar.mimetype.split('/')[1]
@@ -158,7 +156,7 @@ app.post('/api/v1/registro', async (req, res) => {
             //Guardar info en la base de datos
             let consulta = {
                 text: 'INSERT INTO participantes (foto, nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5, $6) ',
-                values: [`${nombreArchivo}`, nombre, email, hashedPassword, experiencia, especialidad]
+                values: [`${nombreArchivo}`, detalleUsuario.nombre, detalleUsuario.email, detalleUsuario.hashedPassword, detalleUsuario.experiencia, detalleUsuario.especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })

@@ -6,7 +6,7 @@ formRegistro.addEventListener("submit", async (event) => {
         event.preventDefault();
         let formData = new FormData(formRegistro);
         if (formData.get("password") != formData.get("repeatPassword")) {
-            return alert("Los passwords no coinciden.")
+            return alert("Los contraseñas no coinciden.")
         }
         let response = await fetch("/api/v1/registro", {
             method: "POST",
