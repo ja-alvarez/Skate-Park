@@ -17,7 +17,7 @@ import validateAdmin from './utils/adminVerify.js'
 
 const app = express();
 const jwtSecret = process.env.JWT_SECRET;
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 const log = console.log;
 
 // Inicio configuracion handlebars
@@ -48,8 +48,8 @@ app.use(fileUpload({
     }
 }));
 
-app.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`)
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`)
 });
 
 // Vistas publicas
@@ -124,15 +124,25 @@ app.get('/administracion', validateToken, validateAdmin, async (req, res) => {
 // Endpoints
 app.post('/api/v1/registro', async (req, res) => {
     try {
-        let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
-        if (password != repeatPassword) {
-            return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
-        };
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        let avatar;
-        if (req.files.avatar) {
+        console.log(req.files);
+        if (req.files == null) {
+            let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
+            if (password != repeatPassword) {
+                return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
+            };
+            const hashedPassword = await bcrypt.hash(password, 10);
+            let consulta = {
+                text: 'INSERT INTO participantes (nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5) ',
+                values: [nombre, email, hashedPassword, experiencia, especialidad]
+            };
+            await db.query(consulta)
+            res.status(201).json({ message: 'Participante registrado exitosamente.' })
+        } else {
+            let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
+            if (password != repeatPassword) {
+                return res.status(400).json({ message: 'Las contraseñas no coinciden.' })
+            };
+            const hashedPassword = await bcrypt.hash(password, 10);
             avatar = req.files.avatar;
             // Ruta donde se guardará la imagen
             let imagenType = avatar.mimetype.split('/')[1]
@@ -149,13 +159,6 @@ app.post('/api/v1/registro', async (req, res) => {
             let consulta = {
                 text: 'INSERT INTO participantes (foto, nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5, $6) ',
                 values: [`${nombreArchivo}`, nombre, email, hashedPassword, experiencia, especialidad]
-            };
-            await db.query(consulta)
-            res.status(201).json({ message: 'Participante registrado exitosamente.' })
-        } else {
-            let consulta = {
-                text: 'INSERT INTO participantes (nombre, email, password, experiencia, especialidad) VALUES ($1, $2, $3, $4, $5) ',
-                values: [nombre, email, hashedPassword, experiencia, especialidad]
             };
             await db.query(consulta)
             res.status(201).json({ message: 'Participante registrado exitosamente.' })
@@ -234,27 +237,27 @@ app.delete('/api/v1/participantes/:id', async (req, res) => {
 });
 
 
-app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async(req, res) => {
+app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async (req, res) => {
     try {
         let id = req.query.id; // let { id } = req.query;
-        if(!id){
+        if (!id) {
             return res.status(400).json({
                 message: 'Debe proporcionar el id del usuario al cual desea cambiar estado.'
             })
         }
 
-        let { rows } = await db.query('SELECT estado FROM participantes WHERE id = $1', [id] )
+        let { rows } = await db.query('SELECT estado FROM participantes WHERE id = $1', [id])
         let usuario = rows[0];
         console.log('usuario', usuario)
-        if (!usuario){
-            return res.status(404).json({message: 'El usuario que desea modificar no fue encontrado. Refresque la página.'})
+        if (!usuario) {
+            return res.status(404).json({ message: 'El usuario que desea modificar no fue encontrado. Refresque la página.' })
         }
         let estado = !usuario.estado
         console.log('estado', estado)
         // let estadoActual = rows[0] ? rows[0].estado : false;
         // let nuevoEstado = !estadoActual;
         await db.query('UPDATE participantes SET estado = $1 WHERE id = $2', [estado, id]) //nuevoEstado
-        res.status(201).json({message: 'Estado modificado con éxito.'})
+        res.status(201).json({ message: 'Estado modificado con éxito.' })
     } catch (error) {
         console.log('catch error', error)
         res.status(500).json({
@@ -263,10 +266,12 @@ app.put('/api/v1/participantes/estado', validateToken, validateAdmin, async(req,
     }
 });
 
+//Actualizar datos usuario
 app.put('/api/v1/participantes/:id', async (req, res) => {
     try {
         let { id } = req.params;
         let { email, nombre, password, repeatPassword, experiencia, especialidad } = req.body;
+        log('email: ', email, ' - nombre: ', nombre, ' - password: ', password, ' - repeatPassword', repeatPassword, ' - experiencia: ', experiencia, ' - especialidad: ', especialidad)
         if (password === repeatPassword) {
             const hashedPassword = await bcrypt.hash(password, 10);
             let { rows } = await db.query('SELECT id, nombre, email, password, experiencia, especialidad FROM participantes WHERE id = $1', [id])
@@ -279,9 +284,13 @@ app.put('/api/v1/participantes/:id', async (req, res) => {
             }
             await db.query(consulta);
             res.status(200).json({ message: 'Participante actualizado exitosamente.' });
+
+
+
+
         } else {
             console.log('else', error)
-            return res.status(401).json({message: 'No fue posible actualizar los datos.'})
+            return res.status(401).json({ message: 'No fue posible actualizar los datos.' })
         }
     } catch (error) {
         console.log('catch', error)

@@ -18,6 +18,7 @@ formRegistro.addEventListener("submit", async (event) => {
             location.href = "/login"
         }
     } catch (error) {
+        console.log(error)
         //alert("Error al registrar usuario.");
     }
 });

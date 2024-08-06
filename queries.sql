@@ -1,9 +1,9 @@
 CREATE TABLE participantes (
     id SERIAL PRIMARY KEY,
-    foto VARCHAR(100) NOT NULL, -- DEFAULT sin_foto.jpeg
+    foto VARCHAR(100) DEFAULT 'sin_foto.jpeg',
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(125) NOT NULL UNIQUE,
-    password VARCHAR(30) NOT NULL, -- mas largo si es con hash
+    password VARCHAR(255) NOT NULL,
     experiencia smallint NOT NULL, -- DEFAULT 0 CHECK (experiencia >=0)
     especialidad VARCHAR(25),
     estado VARCHAR(15) NOT NULL DEFAULT 'En revisión', -- bolean* DEFAULT false 
